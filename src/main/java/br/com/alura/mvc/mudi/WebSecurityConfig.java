@@ -21,7 +21,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 		.authorizeRequests()
 			.anyRequest().authenticated()
 		.and()
-			.httpBasic(); //autenticacao usando popup do navegador
+			.formLogin(form -> form
+					.loginPage("/login")
+					.permitAll()
+			);
 	}
 	
 	@Bean
