@@ -16,35 +16,38 @@ import br.com.alura.mvc.mudi.model.StatusPedido;
 import br.com.alura.mvc.mudi.repository.PedidoRepository;
 
 @Controller
-@RequestMapping("home")
-public class HomeController {
+@RequestMapping("usuario")
+public class UsuarioController {
 
 	@Autowired
 	private PedidoRepository pedidoRepository;
 
-	@GetMapping
+	@GetMapping("pedido")
 	public String home(Model model, Principal principal) {
 		
-		List<Pedido> pedidos = pedidoRepository.findAll();
+		List<Pedido> pedidos = pedidoRepository.findAllByUser(principal.getName());
 		
 		model.addAttribute("pedidos", pedidos);
 		
-		return "home";
+		return "usuario/home";
 	}
 	
-	@GetMapping("/{status}")
-	public String porStatus (@PathVariable("status") String status, Model model) {
+	@GetMapping("pedido/{status}")
+	public String porStatus (@PathVariable("status") String status, Model model, Principal principal) {
 		
-		List<Pedido> pedidos = pedidoRepository.findByStatus(StatusPedido.valueOf(status.toUpperCase()));
+		List<Pedido> pedidos = pedidoRepository.findByStatusAndUser(
+				StatusPedido.valueOf(status.toUpperCase()),
+				principal.getName());
 		
 		model.addAttribute("pedidos", pedidos);
 		model.addAttribute("status", status);
 		
-		return "home";
+		return "usuario/home";
 	}
 	
+	//catch do erro do valueOf acima
 	@ExceptionHandler(IllegalArgumentException.class)
 	public String onError() {
-		return "redirect:/home";
+		return "redirect:/usuario/home";
 	}
 }
